@@ -17,9 +17,35 @@ class TicTacToe:
 
     def available_moves(self):
         return [i for i, spot in enumerate(self.board) if spot == ' ']
-        # moves = []
-        # for (i, spot) in enumerate(self.board):
-        #     # ['x', 'x', 'o'] --> [(0, 'x'), (1, 'x'), (2, 'o')]
-        #     if spot == ' ':
-        #         moves.append(i)
-        # return moves
+
+    def empty_squares(self):
+        return ' ' in self.board
+
+    def num_empty_squares(self):
+        return self.board.count(' ')
+
+    def make_move(self, square, letter):
+        # Если ход правильный, то сделайте этот ход (назначьте квадрат букве).
+        # Затем верните значение true. Если значение неверно, верните значение false
+        if self.board[square] == ' ':
+            self.board[square] = letter
+            return True
+        return False
+
+
+def play(game, x_player, o_player, print_game=True):
+    if print_game:
+        game.print_board_nums()
+
+    letter = 'x'  # начальная буква
+    # повторяйте, пока в игре все еще есть пустые квадраты
+    # (нам не нужно беспокоиться о победителе, потому что мы просто вернем его
+    # который разрывает цикл)
+    while game.empty_squares():
+        # получите ход от соответствующего игрока
+        if letter == 'o':
+            square = o_player.get_move(game)
+        else:
+            square = x_player.get_move(game)
+
+        # давайте определим функцию для совершения движения!

@@ -27,4 +27,19 @@ class HumanPlayer(Player):
         super().__init__(letter)
 
     def get_move(self, game):
-        pass
+        valid_square = False
+        val = None
+        while not valid_square:
+            square = input(self.letter + '\'очередь. Входной ход (0-9):')
+            # мы собираемся проверить, что это правильное значение, попытавшись привести
+            # это целое число, а если это не так, то мы говорим, что оно недействительно
+            # если это место недоступно на доске, мы также объявляем его недействительным
+            try:
+                val = int(square)
+                if val not in game.available_moves():
+                    raise ValueError
+                valid_square = True  # если они окажутся успешными, то ура!
+            except ValueError:
+                print('Недопустимый квадрат. Пробовать снова.')
+
+        return val

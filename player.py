@@ -42,3 +42,16 @@ class HumanPlayer(Player):
                 print('Недопустимый квадрат. Пробовать снова.')
 
         return val
+
+
+def GeniusComputerPlayer(Player):
+    def __init__(self, letter):
+        super().__init__(letter)
+
+    def get_move(self, game):
+        if len(game.available_moves()) == 9:
+            square = random.choice(game.available_moves())  # случайным образом выберите один из них
+        else:
+            # вычислите квадрат на основе минимаксного алгоритма
+            square = self.minimax(game, self.letter)
+        return square

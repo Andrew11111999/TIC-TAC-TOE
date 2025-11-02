@@ -4,7 +4,7 @@ import random
 
 class Player:
     def __init__(self, letter):
-        # буква "х" или "о"
+        # игрок использует букву 'X' или 'O' для обозначения своего хода
         self.letter = letter
 
     # мы хотим, чтобы все игроки определяли свой следующий ход по ходу игры
@@ -17,7 +17,7 @@ class RandomComputerPlayer(Player):
         super().__init__(letter)
 
     def get_move(self, game):
-        # получите случайное действительное место для нашего следующего хода
+        # выберите случайный доступный ход из доступных на доске
         square = random.choice(game.available_moves())
         return square
 
@@ -31,9 +31,8 @@ class HumanPlayer(Player):
         val = None
         while not valid_square:
             square = input(self.letter + '\'очередь. Входной ход (0-8):')
-            # мы собираемся проверить, что это правильное значение, попытавшись привести
-            # это целое число, а если это не так, то мы говорим, что оно недействительно
-            # если это место недоступно на доске, мы также объявляем его недействительным
+            # проверяем, что ввод пользователя является числом и доступным ходом на доске
+            # если нет, просим ввести снова
             try:
                 val = int(square)
                 if val not in game.available_moves():

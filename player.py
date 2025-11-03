@@ -44,7 +44,7 @@ class HumanPlayer(Player):
         return val
 
 
-def GeniusComputerPlayer(Player):
+class GeniusComputerPlayer(Player):
     def __init__(self, letter):
         super().__init__(letter)
 
@@ -55,3 +55,25 @@ def GeniusComputerPlayer(Player):
             # вычислите квадрат на основе минимаксного алгоритма
             square = self.minimax(game, self.letter)
         return square
+
+    def minimax(self, state, player):
+        max_player = self.letter  # себя!!
+        other_player = 'O' if player == 'X' else 'X'  # Другой игрок... так что какая бы буква НИ была НЕ u
+
+        # во-первых, мы хотим проверить, был ли предыдущий ход выигрышным
+        # это наш базовый вариант
+        if state.current_winner == other_player:
+            # мы должны вернуть позицию И забить, потому что нам нужно следить за счетом
+            # чтобы сработал minimax
+            return {'position': None,
+                    'score': 1 * (state.num_empty_square() + 1) if other_player == max_player else -1 * (
+                            state.num_empty_squares() + 1)
+                    }
+
+        elif not state.empty_squares():  # никаких пустых квадратов
+            return {'position': None, 'score': 0}
+
+        if player == max_player:
+            best = {'position': None, 'score': -math.inf}  # каждый балл должен быть максимальным (быть больше)
+        else:
+            best = {'position': None, 'score': math.inf}  # каждый балл должен быть максимальным

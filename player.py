@@ -53,7 +53,7 @@ class GeniusComputerPlayer(Player):
             square = random.choice(game.available_moves())  # случайным образом выберите один из них
         else:
             # вычислите квадрат на основе минимаксного алгоритма
-            square = self.minimax(game, self.letter)
+            square = self.minimax(game, self.letter)['position']
         return square
 
     def minimax(self, state, player):
@@ -66,14 +66,36 @@ class GeniusComputerPlayer(Player):
             # мы должны вернуть позицию И забить, потому что нам нужно следить за счетом
             # чтобы сработал minimax
             return {'position': None,
-                    'score': 1 * (state.num_empty_square() + 1) if other_player == max_player else -1 * (
+                    'score': 1 * (state.num_empty_squares() + 1) if other_player == max_player else -1 * (
                             state.num_empty_squares() + 1)
                     }
 
         elif not state.empty_squares():  # никаких пустых квадратов
             return {'position': None, 'score': 0}
 
+        # Если ход выполняет max_player, пытаемся выбрать ход с максимальной оценкой
         if player == max_player:
-            best = {'position': None, 'score': -math.inf}  # каждый балл должен быть максимальным (быть больше)
+            best = {'position': None, 'score': -math.inf}  # мы пытаемся миксимизировать оценку для max_player
         else:
-            best = {'position': None, 'score': math.inf}  # каждый балл должен быть максимальным
+            best = {'position': None, 'score': math.inf}  # следует выбрать минимальный балл
+
+        for possible_move in state.available_moves():
+            # шаг 1: сделать ход
+            state.make_move(possible_move, player)
+            # шаг 2: Рекурсивно оценить ход противника
+            sim_score = self.minimax(state, other_player)  # теперь мы меняем игроков
+
+            # шаг 3: Отменить ход (откатить изменения)
+            state.board[possible_move] = ' '
+            state.current_winner = None
+            sim_score['position'] = possible_move  # в противном случае это будет испорчено из-за рекурсии
+
+            # шаг 4: Обновить лучший результат в зависимости от игрока
+            if player == max_player:  # мы пытаемся максимально увеличить max_player
+                if sim_score['score'] > best['score']:
+                    best = sim_score  # заменить лучшее
+            else:  # но сведите к минимуму другого игрока
+                if sim_score['score'] < best['score']:
+                    best = sim_score  # заменить лучшее
+
+        return best
